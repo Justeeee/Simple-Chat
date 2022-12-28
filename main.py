@@ -14,24 +14,24 @@ MAX_MESSAGES_COUNT = 100
 async def main():
     global chat_msgs
 
-    put_markdown("## 🧊 Добро пожаловать в онлайн чат!\nИсходный код данного чата укладывается в 100 строк!")
+    put_markdown("## 🧊 Welcome to our chat!\nThis project was made with Python within 100 lines of code!")
 
     msg_box = output()
     put_scrollable(msg_box, height=300, keep_bottom=True)
 
-    nickname = await input("Войти в чат", required=True, placeholder="Ваше имя", validate=lambda n: "Такой ник уже используется!" if n in online_users or n == '📢' else None)
+    nickname = await input("Enter chat", required=True, placeholder="Nickname", validate=lambda n: "This nickname is already in use!" if n in online_users or n == '📢' else None)
     online_users.add(nickname)
 
-    chat_msgs.append(('📢', f"`{nickname}` присоединился к чату!"))
-    msg_box.append(put_markdown(f"`{nickname}` присоединился к чату!"))
+    chat_msgs.append(('📢', f"`{nickname}` joined chat!"))
+    msg_box.append(put_markdown(f"`{nickname}` joined chat!"))
 
     refresh_task = run_async(refresh_msg(nickname, msg_box))
 
     while True:
-        data = await input_group("💭 Новое сообщение", [
-            input(placeholder="Текст сообщения", name="msg"),
-            actions(name="cmd", buttons=["Отправить", {'label':"Выйти из чата", 'type':'cancel'}])
-        ], validate=lambda m: ('msg', "Введите текст сообщения!") if m["cmd"] == "Отправить" and not m["msg"] else None)
+        data = await input_group("💭 New message", [
+            input(placeholder="Text of message", name="msg"),
+            actions(name="cmd", buttons=["Send", {'label':"Quit chat", 'type':'cancel'}])
+        ], validate=lambda m: ('msg', "Enter the text of message!") if m["cmd"] == "Send" and not m["msg"] else None)
 
         if data is None:
             break
@@ -44,10 +44,10 @@ async def main():
 
     online_users.remove(nickname)
     toast("Вы вышли из чата!")
-    msg_box.append(put_markdown(f"📢 Пользователь `{nickname}` покинул чат!"))
-    chat_msgs.append(('📢', f"Пользователь `{nickname}` покинул чат!"))
+    msg_box.append(put_markdown(f"📢 `{nickname}` quited the chat !"))
+    chat_msgs.append(('📢', f"`{nickname}` quited the chat!"))
 
-    put_buttons(["Перезайти"], onclick=lambda btn: run_js('window.location.reload()'))
+    put_buttons(["Reenter"], onclick=lambda btn: run_js('window.location.reload()'))
 
 
 async def refresh_msg(nickname, msg_box):
